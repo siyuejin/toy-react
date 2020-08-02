@@ -94,7 +94,11 @@ export class Component {
             for (let p in newState) {
                 if (typeof newState[p] === 'object' && newState[p] !== null) {
                     if (typeof oldState[p] !== 'object') {
-                        oldState[p] = {};
+                        if (newState[p] instanceof Array) {
+                            oldState[p] = [];
+                        } else {
+                            oldState[p] = {};
+                        }
                     }
                     merge(oldState[p], newState[p]);
                 } else {
