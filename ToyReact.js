@@ -64,9 +64,17 @@ export class Component {
     }
 
     update() {
+        // Workaround: insert a placeholder at the place where deleted to avoid location change
+        let range = document.createRange();
+        range.setStart(this.range.endContainer, this.range.endOffset);
+        range.setEnd(this.range.endContainer, this.range.endOffset);
+        range.insertNode(document.createComment("placeholder"));
+
         this.range.deleteContents();
         let vdom = this.render();
         vdom.mountTo(this.range);
+
+        // placeholder.parentNode.removeChild(placeholder);
     }
 
     appendChild(vchild) {
