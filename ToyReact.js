@@ -29,9 +29,11 @@ class TextWrapper {
 export class Component {
     constructor() {
         this.children = [];
+        this.props = Object.create(null);  // null => Get rid of default methods in Object(e.g toSting)
     }
 
     setAttribute(name, value) {
+        this.props[name] = value; 
         this[name] = value;
     }
 

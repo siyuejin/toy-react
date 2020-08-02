@@ -2,7 +2,7 @@ import {ToyReact, Component} from './ToyReact';
 class Square extends Component {
     render() {
         return (
-            <button className="square">
+            <button className="square" onClick={() => { alert('click'); }}>
                 {this.props.value}
             </button>
         );
