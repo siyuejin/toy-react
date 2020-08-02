@@ -1,36 +1,69 @@
 // "if" keyword is ugly. Use wrapper instead.
 class ElementWrapper {
     constructor(type) {
-        this.root = document.createElement(type);
+        this.type = type;
+        this.props = Object.create(null);
+        this.children = [];
     }
 
     setAttribute(name, value) {
         // match all strings begining with 'on', and catch the substring following.
-        if (name.match(/^on([\s\S]+)$/)) {
-            let eventName = RegExp.$1.replace(/^[\s\S]/, s => s.toLowerCase());
-            this.root.addEventListener(eventName, value);
-        }
-        if (name === "className") {
-            this.root.setAttribute("class", value);
-        }
-        this.root.setAttribute(name, value);
+        // if (name.match(/^on([\s\S]+)$/)) {
+        //     let eventName = RegExp.$1.replace(/^[\s\S]/, s => s.toLowerCase());
+        //     this.root.addEventListener(eventName, value);
+        // }
+        // if (name === "className") {
+        //     this.root.setAttribute("class", value);
+        // }
+        // this.root.setAttribute(name, value);
+
+        this.props[name] = value;
     }
 
     appendChild(vchild) {
-        let range = document.createRange();
-        if (this.root.children.length) {
-            range.setStartAfter(this.root.lastChild);
-            range.setEndAfter(this.root.lastChild);
-        } else {
-            range.setStart(this.root, 0);
-            range.setEnd(this.root, 0);
-        }
-        vchild.mountTo(range);
+        // let range = document.createRange();
+        // if (this.root.children.length) {
+        //     range.setStartAfter(this.root.lastChild);
+        //     range.setEndAfter(this.root.lastChild);
+        // } else {
+        //     range.setStart(this.root, 0);
+        //     range.setEnd(this.root, 0);
+        // }
+        // vchild.mountTo(range);
+        this.children.push(vchild);
     }
 
     mountTo(range) {
         range.deleteContents();
-        range.insertNode(this.root);
+        let element = document.createElement(this.type);
+
+        // setAttribute
+        for (let name in this.props) {
+            let value = this.props[name];
+            if (name.match(/^on([\s\S]+)$/)) {
+                let eventName = RegExp.$1.replace(/^[\s\S]/, s => s.toLowerCase());
+                element.addEventListener(eventName, value);
+            }
+            if (name === "className") {
+                element.setAttribute("class", value);
+            }
+            element.setAttribute(name, value)
+        }
+
+        // mountTo
+        for (let child of this.children) {
+            let range = document.createRange();
+            if (element.children.length) {
+                range.setStartAfter(element.lastChild);
+                range.setEndAfter(element.lastChild);
+            } else {
+                range.setStart(element, 0);
+                range.setEnd(element, 0);
+            }
+            child.mountTo(range);
+        }
+
+        range.insertNode(element);
     }
 }
 
@@ -70,17 +103,8 @@ export class Component {
     update() {
         // ... willUpdate(omitted)
 
-        // Workaround: insert a placeholder at the place where deleted to avoid location change
-        let range = document.createRange();
-        range.setStart(this.range.endContainer, this.range.endOffset);
-        range.setEnd(this.range.endContainer, this.range.endOffset);
-        range.insertNode(document.createComment("placeholder"));
-
-        this.range.deleteContents();
         let vdom = this.render();
         vdom.mountTo(this.range);
-
-        // placeholder.parentNode.removeChild(placeholder);
 
         // ... didUpdate(omitted)
     }
