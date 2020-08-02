@@ -1,11 +1,20 @@
 import {ToyReact, Component} from './ToyReact';
 class MyComponent extends Component {
     render() {
-        return <div><span>hello</span><span>world!</span></div>
+        return <div>
+            <span>hello</span>
+            <span>world!</span>
+            <div>
+                {true}
+                {this.children}
+            </div>
+        </div>
     }
 }
 
-let a = <MyComponent name="a" id="ida"></MyComponent>
+let a = <MyComponent name="a" id="ida">
+    <div>123</div>
+</MyComponent>
 
 
 ToyReact.render(
