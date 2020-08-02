@@ -26,6 +26,17 @@ class TextWrapper {
     }
 }
 
+export class Component {
+    setAttribute(name, value) {
+        this[name] = value;
+    }
+
+    mountTo(parent) {
+        let vdom = this.render();
+        vdom.mountTo(parent);
+    }
+}
+
 
 export let ToyReact = {
     createElement(type, attributes, ...children) {
