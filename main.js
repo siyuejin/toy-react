@@ -1,14 +1,16 @@
 import {ToyReact, Component} from './ToyReact';
 
-function Square(props) {
-  return (
-    <button className="square" onClick={props.onClick}>
-      {props.value}
-    </button>
-  );
+class Square extends Component {
+    render() {
+      return (
+        <button className="square" onClick={this.props.onClick}>
+              {this.props.value}
+        </button>
+      );
+    }
 }
 
-class Board extends React.Component {
+class Board extends Component {
   renderSquare(i) {
     return (
       <Square
@@ -41,7 +43,7 @@ class Board extends React.Component {
   }
 }
 
-class Game extends React.Component {
+class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -123,7 +125,7 @@ class Game extends React.Component {
 
 // ========================================
 
-ReactDOM.render(<Game />, document.getElementById("root"));
+ToyReact.render(<Game />, document.body);
 
 function calculateWinner(squares) {
   const lines = [
@@ -144,10 +146,3 @@ function calculateWinner(squares) {
   }
   return null;
 }
-
-
-
-ToyReact.render(
-    a,
-    document.body
-);
