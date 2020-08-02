@@ -7,7 +7,8 @@ class ElementWrapper {
     setAttribute(name, value) {
         // match all strings begining with 'on', and catch the substring following.
         if (name.match(/^on([\s\S]+)$/)) {
-            console.log(RegExp.$1); // print 'Click' for 'onClick'
+            let eventName = RegExp.$1.replace(/^[\s\S]/, s => s.toLowerCase());
+            this.root.addEventListener(eventName, value);
         }
         this.root.setAttribute(name, value);
     }
