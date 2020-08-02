@@ -70,6 +70,9 @@ class ElementWrapper {
 class TextWrapper {
     constructor(content) {
         this.root = document.createTextNode(content);
+        this.type = "#text";
+        this.children = [];
+        this.props = Object.create(null);
     }
     mountTo(range) {
         range.deleteContents();
@@ -81,6 +84,11 @@ export class Component {
     constructor() {
         this.children = [];
         this.props = Object.create(null);  // null => Get rid of default methods in Object(e.g toSting)
+    }
+
+    // Type getter
+    get type() {
+        return this.constructor.name;
     }
 
     setAttribute(name, value) {
@@ -105,6 +113,50 @@ export class Component {
 
         let vdom = this.render();
         if (this.vdom) {
+            // check if two V-DOM nodes are same 
+            let isSameNode = (node1, node2) => {
+
+                if (node1.type !== node2.type) {
+                    // if node types are not same
+                    return false;
+                }
+                if (Object.keys(node1.props).length !== Object.keys(node2.props).length) {
+                    // if lengths of props are not same
+                    return false;
+                }
+                for (let name in node1.props) {
+                    if (node1.props[name] !== node2.props[name]) {
+                        // if any prop is not same
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            // check if two whole V-DOM trees are same. Recursively check on subtrees
+            let isSameTree = (node1, node2) => {
+                if (!isSameNode(node1, node2)) {
+                    // if root nodes are are not same
+                    return false;
+                }
+                if (node1.children.length !== node2.children.length) {
+                    // if lengths of children nodes are not same
+                    return false;
+                }
+                for (let i = 0; i < node1.children.length; i++) {
+                    // if any corresponding childs are not same trees
+                    if (!isSameTree(node1.children[i], node2.children[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            if (isSameTree(vdom, this.vdom)) {
+                // old and new V-DOM trees are identical
+                return;
+            }
+
             console.log("new:", vdom);
             console.log("old:", this.vdom);
         } else {
