@@ -154,7 +154,10 @@ export class Component {
                 return true;
             }
 
-            let replace = (newTree, oldTree) => {
+            let replace = (newTree, oldTree, indent) => {
+                console.log(indent + "New:", newTree);
+                console.log(indent + "Old:", oldTree);
+                // debugger;
                 if (isSameTree(newTree, oldTree)) {
                     // old and new V-DOM trees are identical
                     return;
@@ -162,20 +165,17 @@ export class Component {
                 // if two trees has something different
                 if (!isSameNode(newTree, oldTree)) {
                     // if root nodes are different, replace the whole tree
-                    vdom.mountTo(oldTree.range);
+                    newTree.mountTo(oldTree.range);
                 } else {
                     // attempt to update the subtree
                     for (let i = 0; i < newTree.children.length; i++) {
                         // Recursive call;
-                        replace(newTree.children[i], oldTree.children[i])
+                        replace(newTree.children[i], oldTree.children[i], " " + indent)
                     }
                 }
             }
 
-            console.log("new:", vdom);
-            console.log("old:", this.vdom);
-
-            replace(vdom, this.vdom);
+            replace(vdom, this.vdom, "");
 
         } else {
             vdom.mountTo(this.range);
