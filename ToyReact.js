@@ -1,8 +1,11 @@
+let childrenSymbol = Symbol("children");
+
 // "if" keyword is ugly. Use wrapper instead.
 class ElementWrapper {
     constructor(type) {
         this.type = type;
         this.props = Object.create(null);
+        this[childrenSymbol] = [];
         this.children = [];
     }
 
@@ -30,11 +33,23 @@ class ElementWrapper {
         //     range.setEnd(this.root, 0);
         // }
         // vchild.mountTo(range);
-        this.children.push(vchild);
+        this[childrenSymbol].push(vchild);
+        this.children.push(vchild.vdom);
+    }
+
+    get vdom() {
+        return this;
     }
 
     mountTo(range) {
         this.range = range; // save the range
+        
+        let placeholder = document.createComment("placeholder");
+        let endRange = document.createRange();
+        endRange.setStart(range.endContainer, range.endOffset);
+        endRange.setEnd(range.endContainer, range.endOffset);
+        endRange.insertNode(placeholder);
+
         range.deleteContents();
         let element = document.createElement(this.type);
 
@@ -75,10 +90,15 @@ class TextWrapper {
         this.children = [];
         this.props = Object.create(null);
     }
+
     mountTo(range) {
         this.range = range; // save the range
         range.deleteContents();
         range.insertNode(this.root);
+    }
+
+    get vdom() {
+        return this;
     }
 }
 
@@ -113,8 +133,8 @@ export class Component {
     update() {
         // ... willUpdate(omitted)
 
-        let vdom = this.render();
-        if (this.vdom) {
+        let vdom = this.vdom;
+        if (this.oldVdom) {
             // check if two V-DOM nodes are same 
             let isSameNode = (node1, node2) => {
 
@@ -127,6 +147,17 @@ export class Component {
                     return false;
                 }
                 for (let name in node1.props) {
+                    // Causing unexpected "all same", without central eventbus built in react
+                    // Now the re-render region is larger than expected(single block) bc/ event change e.g. 'onClick'
+                    //
+                    // if (typeof node1.props[name] === 'function' && typeof node2.props[name] === 'function' && 
+                    //     node1.props[name].toString() === node2.props[name].toString()) {
+                    //     continue;
+                    // }
+                    if (typeof node1.props[name] === 'object' && typeof node2.props[name] === 'object' && 
+                        JSON.stringify(node1.props[name])=== JSON.stringify(node2.props[name])) {
+                        continue;
+                    }
                     if (node1.props[name] !== node2.props[name]) {
                         // if any prop is not same
                         return false;
@@ -160,11 +191,13 @@ export class Component {
                 // debugger;
                 if (isSameTree(newTree, oldTree)) {
                     // old and new V-DOM trees are identical
+                    console.log("all same");
                     return;
                 }
                 // if two trees has something different
                 if (!isSameNode(newTree, oldTree)) {
                     // if root nodes are different, replace the whole tree
+                    console.log("all different");
                     newTree.mountTo(oldTree.range);
                 } else {
                     // attempt to update the subtree
@@ -175,14 +208,18 @@ export class Component {
                 }
             }
 
-            replace(vdom, this.vdom, "");
+            replace(vdom, this.oldVdom, "");
 
         } else {
             vdom.mountTo(this.range);
         }
-        this.vdom = vdom;   // save V-DOM
+        this.oldVdom = vdom;   // save V-DOM
 
         // ... didUpdate(omitted)
+    }
+
+    get vdom() {
+        return this.render().vdom;
     }
 
     appendChild(vchild) {
