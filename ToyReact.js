@@ -130,6 +130,9 @@ export let ToyReact = {
                 } else {
                     // Safety: for unknown type, coerce to string
                     // eg. boolean true -> string "true"
+                    if (child === null || child === void 0) {   // void 0 => undefined
+                        child = "";
+                    }
                     if (!(child instanceof Component) 
                     && !(child instanceof ElementWrapper)
                     && !(child instanceof TextWrapper)) {
