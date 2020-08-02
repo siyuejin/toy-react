@@ -104,7 +104,13 @@ export class Component {
         // ... willUpdate(omitted)
 
         let vdom = this.render();
-        vdom.mountTo(this.range);
+        if (this.vdom) {
+            console.log("new:", vdom);
+            console.log("old:", this.vdom);
+        } else {
+            vdom.mountTo(this.range);
+        }
+        this.vdom = vdom;   // save V-DOM
 
         // ... didUpdate(omitted)
     }
