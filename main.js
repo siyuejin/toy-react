@@ -1,5 +1,5 @@
 import {ToyReact, Component} from './ToyReact';
-window.Squares = {};
+
 class Square extends Component {
     constructor(props) {
         super(props);
@@ -9,7 +9,6 @@ class Square extends Component {
     }
 
     render() {
-        window.Squares[this.props["value"]] = this;
         return (
             <button className="square" onClick={() => this.setState({value: 'X'})}>
                 {this.state.value ? this.state.value : ""}

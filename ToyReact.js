@@ -11,7 +11,7 @@ class ElementWrapper {
             this.root.addEventListener(eventName, value);
         }
         if (name === "className") {
-            name = "class";
+            this.root.setAttribute("class", value);
         }
         this.root.setAttribute(name, value);
     }
@@ -59,11 +59,17 @@ export class Component {
     }
 
     mountTo(range) {
+        // ... willMount(omitted)
+
         this.range = range // save the range, for later update
         this.update();
+
+        // ... didMount(omitted)
     }
 
     update() {
+        // ... willUpdate(omitted)
+
         // Workaround: insert a placeholder at the place where deleted to avoid location change
         let range = document.createRange();
         range.setStart(this.range.endContainer, this.range.endOffset);
@@ -75,6 +81,8 @@ export class Component {
         vdom.mountTo(this.range);
 
         // placeholder.parentNode.removeChild(placeholder);
+
+        // ... didUpdate(omitted)
     }
 
     appendChild(vchild) {
