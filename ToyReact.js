@@ -34,6 +34,7 @@ class ElementWrapper {
     }
 
     mountTo(range) {
+        this.range = range; // save the range
         range.deleteContents();
         let element = document.createElement(this.type);
 
@@ -75,6 +76,7 @@ class TextWrapper {
         this.props = Object.create(null);
     }
     mountTo(range) {
+        this.range = range; // save the range
         range.deleteContents();
         range.insertNode(this.root);
     }
@@ -152,13 +154,29 @@ export class Component {
                 return true;
             }
 
-            if (isSameTree(vdom, this.vdom)) {
-                // old and new V-DOM trees are identical
-                return;
+            let replace = (newTree, oldTree) => {
+                if (isSameTree(newTree, oldTree)) {
+                    // old and new V-DOM trees are identical
+                    return;
+                }
+                // if two trees has something different
+                if (!isSameNode(newTree, oldTree)) {
+                    // if root nodes are different, replace the whole tree
+                    vdom.mountTo(oldTree.range);
+                } else {
+                    // attempt to update the subtree
+                    for (let i = 0; i < newTree.children.length; i++) {
+                        // Recursive call;
+                        replace(newTree.children[i], oldTree.children[i])
+                    }
+                }
             }
 
             console.log("new:", vdom);
             console.log("old:", this.vdom);
+
+            replace(vdom, this.vdom);
+
         } else {
             vdom.mountTo(this.range);
         }
