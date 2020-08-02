@@ -86,14 +86,27 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./ToyReact.js":
+/*!*********************!*\
+  !*** ./ToyReact.js ***!
+  \*********************/
+/*! exports provided: ToyReact */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ToyReact\", function() { return ToyReact; });\nvar ToyReact = {\n  createElement: function createElement(type, attributes) {\n    var element = document.createElement(type);\n\n    for (var name in attributes) {\n      // element[name] = attributes[name] wrong\n      element.setAttribute(name, attributes[name]);\n    }\n\n    for (var _len = arguments.length, children = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {\n      children[_key - 2] = arguments[_key];\n    }\n\n    for (var _i = 0, _children = children; _i < _children.length; _i++) {\n      var child = _children[_i];\n\n      if (typeof child === \"string\") {\n        child = document.createTextNode(child);\n      }\n\n      element.appendChild(child);\n    }\n\n    return element;\n  },\n  render: function render(vdom, element) {\n    // if it is a REAL DOM rather than a V-DOM\n    element.appendChild(vdom);\n  }\n};\n\n//# sourceURL=webpack:///./ToyReact.js?");
+
+/***/ }),
+
 /***/ "./main.js":
 /*!*****************!*\
   !*** ./main.js ***!
   \*****************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("// import {ToyReact} from './ToyReact';\nvar a = ToyReact.createElement(\"div\", {\n  name: \"a\",\n  id: \"ida\"\n}, ToyReact.createElement(\"span\", null, \"Hello\"), ToyReact.createElement(\"span\", null, \"World\"), ToyReact.createElement(\"span\", null, \"!\"));\ndocument.body.appendChild(a);\n\n//# sourceURL=webpack:///./main.js?");
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _ToyReact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ToyReact */ \"./ToyReact.js\");\n\nvar a = _ToyReact__WEBPACK_IMPORTED_MODULE_0__[\"ToyReact\"].createElement(\"div\", {\n  name: \"a\",\n  id: \"ida\"\n}, _ToyReact__WEBPACK_IMPORTED_MODULE_0__[\"ToyReact\"].createElement(\"span\", null, \"Hello\"), _ToyReact__WEBPACK_IMPORTED_MODULE_0__[\"ToyReact\"].createElement(\"span\", null, \"World\"), _ToyReact__WEBPACK_IMPORTED_MODULE_0__[\"ToyReact\"].createElement(\"span\", null, \"!\"));\n_ToyReact__WEBPACK_IMPORTED_MODULE_0__[\"ToyReact\"].render(a, document.body);\n\n//# sourceURL=webpack:///./main.js?");
 
 /***/ })
 
